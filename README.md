@@ -302,6 +302,7 @@ To https://github.com/ilvivl/lab03.git
 
 ```sh
 $ popd
+~/Documents/acro/ilvivl/workspace
 $ export LAB_NUMBER=03
 $ git clone https://github.com/tp-labs/lab${LAB_NUMBER} tasks/lab${LAB_NUMBER}
 $ mkdir reports/lab${LAB_NUMBER}
