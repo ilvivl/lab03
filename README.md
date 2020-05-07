@@ -286,6 +286,16 @@ $ git commit -m"added CMakeLists.txt"
  1 file changed, 36 insertions(+)
  create mode 100644 CMakeLists.txt
 $ git push origin master
+Username for 'https://github.com': ilvivl
+Password for 'https://ilvivl@github.com':
+Counting objects: 22, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (17/17), done.
+Writing objects: 100% (22/22), 3.79 KiB | 73.00 KiB/s, done.
+Total 22 (delta 2), reused 0 (delta 0)
+remote: Resolving deltas: 100% (2/2), done.
+To https://github.com/ilvivl/lab03.git
+ * [new branch]      master -> master
 ```
 
 ## Report
