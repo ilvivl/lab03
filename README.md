@@ -211,20 +211,80 @@ remote: Counting objects: 100% (15/15), done.
 remote: Compressing objects: 100% (13/13), done.
 remote: Total 88 (delta 7), reused 4 (delta 2), pack-reused 73
 Unpacking objects: 100% (88/88), done.
-$ mv -f tmp/CMakeLists.txt . #get the CMake file
+$ mv -f tmp/CMakeLists.txt . #move the CMake file
 $ rm -rf tmp
 ```
 
 ```sh
 $ cat CMakeLists.txt
-$ cmake -H. -B_build -DCMAKE_INSTALL_PREFIX=_install
-$ cmake --build _build --target install
-$ tree _install
+cmake_minimum_required(VERSION 3.4)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_EXAMPLES "Build examples" OFF)
+
+project(print)
+
+add_library(print STATIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
+
+target_include_directories(print PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+if(BUILD_EXAMPLES)
+  file(GLOB EXAMPLE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/examples/*.cpp")
+  foreach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
+    get_filename_component(EXAMPLE_NAME ${EXAMPLE_SOURCE} NAME_WE)
+    add_executable(${EXAMPLE_NAME} ${EXAMPLE_SOURCE})
+    target_link_libraries(${EXAMPLE_NAME} print)
+    install(TARGETS ${EXAMPLE_NAME}
+      RUNTIME DESTINATION bin
+    )
+  endforeach(EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
+endif()
+
+install(TARGETS print
+    EXPORT print-config
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+install(EXPORT print-config DESTINATION cmake)
+$ cmake -H. -B_build -DCMAKE_INSTALL_PREFIX=_install #redefine DCMAKE_INSTALL_PREFIX
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/ilya/Documents/acro/ilvivl/workspace/projects/lab03/_build
+$ cmake --build _build --target install #build install
+[100%] Built target print
+Install the project...
+-- Install configuration: ""
+-- Installing: /home/ilya/Documents/acro/ilvivl/workspace/projects/lab03/_install/lib/libprint.a
+-- Installing: /home/ilya/Documents/acro/ilvivl/workspace/projects/lab03/_install/include
+-- Installing: /home/ilya/Documents/acro/ilvivl/workspace/projects/lab03/_install/include/print.hpp
+-- Installing: /home/ilya/Documents/acro/ilvivl/workspace/projects/lab03/_install/cmake/print-config.cmake
+-- Installing: /home/ilya/Documents/acro/ilvivl/workspace/projects/lab03/_install/cmake/print-config-noconfig.cmake
+$ tree _install #show tree
+_install
+├── cmake
+│   ├── print-config.cmake
+│   └── print-config-noconfig.cmake
+├── include
+│   └── print.hpp
+└── lib
+    └── libprint.a
+
+3 directories, 4 files
 ```
 
 ```sh
 $ git add CMakeLists.txt
 $ git commit -m"added CMakeLists.txt"
+[master 151537f] added CMakeLists.txt
+ 1 file changed, 36 insertions(+)
+ create mode 100644 CMakeLists.txt
 $ git push origin master
 ```
 
